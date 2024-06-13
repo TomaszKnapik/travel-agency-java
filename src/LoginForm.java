@@ -1,3 +1,6 @@
+import Models.User;
+import Models.UserSingleton;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,17 +35,29 @@ public class LoginForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    int userRole = checkCredentials(emailInput.getText(), new String(passwordField1.getPassword()));
-                    if (userRole == 1) {
-                        dispose();
-                        AdminDashboard adminDashboard = new AdminDashboard();
-                        adminDashboard.setVisible(true);
-                    } else if (userRole == 0) {
-                        dispose();
-                        UserDashboard userDashboard = new UserDashboard(); // assuming you have a UserDashboard class
-                        userDashboard.setVisible(true);
-                    } else {
+                    User user = getUser(emailInput.getText(), new String(passwordField1.getPassword()));
+                    if (user == null) {
                         JOptionPane.showMessageDialog(LoginForm.this, "Nieprawidłowy email lub hasło.", "Błąd logowania", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+
+                    int userRole = user.getUserRole();
+
+                    new UserSingleton(user);
+
+                    switch (userRole) {
+                        case 0:
+                            UserDashboard userDashboard = new UserDashboard(); // assuming you have a UserDashboard class
+                            userDashboard.setVisible(true);
+                            dispose();
+                            break;
+                        case 1:
+                            AdminDashboard adminDashboard = new AdminDashboard();
+                            adminDashboard.setVisible(true);
+                            dispose();
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(LoginForm.this, "Nieprawidłowa konfiguracja uprawnień użytkownika.", "Błąd logowania", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -70,20 +85,28 @@ public class LoginForm extends JFrame {
         });
     }
 
-    private int checkCredentials(String nazwa_uzytkownika, String haslo) throws SQLException {
+    private User getUser(String username, String password) throws SQLException {
         Connection connection = Database.getConnection();
         String query = "SELECT * FROM user WHERE nazwa_uzytkownika = ? AND haslo = ?";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, nazwa_uzytkownika);
-        preparedStatement.setString(2, haslo);
+        preparedStatement.setString(1, username);
+        preparedStatement.setString(2, password);
         ResultSet resultSet = preparedStatement.executeQuery();
-        int userRole = -1;
+
+        User result = null;
+
         if (resultSet.next()) {
-            userRole = resultSet.getInt("Admin");
+            int userId = resultSet.getInt("id_user");
+            String email = resultSet.getString("email");
+            String loggedUsername = resultSet.getString("nazwa_uzytkownika");
+            int userRole = resultSet.getInt("Admin");
+            result = new User(userId, email, loggedUsername, userRole);
         }
+
         resultSet.close();
         preparedStatement.close();
         connection.close();
-        return userRole;
+
+        return result;
     }
 }

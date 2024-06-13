@@ -1,3 +1,6 @@
+import Models.User;
+import Models.UserSingleton;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,8 +16,13 @@ public class AdminDashboard extends JFrame {
     private JButton exitButton;
     private JButton logOutButton;
 
+    private User user;
+
     public AdminDashboard() {
         super("Panel administracyjny");
+
+        this.user = UserSingleton.getInstance().getUser();
+
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(this.adminPanel);
         this.setSize(800, 600);
@@ -48,6 +56,7 @@ public class AdminDashboard extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 dispose();
                 Menu menu = new Menu();
+                UserSingleton.logout();
                 menu.setVisible(true);
             }
         });
