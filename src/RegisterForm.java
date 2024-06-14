@@ -1,3 +1,6 @@
+import Models.User;
+import Services.UserService;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -60,42 +63,43 @@ public class RegisterForm extends JFrame {
     }
 
     private void handleRegistration() {
-        String nazwa_uzytkownika = userNameInput.getText();
-        String email = emailInput.getText();
-        String haslo = new String(passwordInput1.getPassword());
-        String haslo1 = new String(passwordInput2.getPassword());
-        String imie = firstnameInput.getText();
-        String nazwisko = surnameInput.getText();
+        String password = new String(passwordInput1.getPassword());
+        String password2 = new String(passwordInput2.getPassword());
+
+        if(!password.equals(password2)) {
+            JOptionPane.showMessageDialog(this, "Hasła nie są zgodne.");
+            return;
+        }
+
+        User user = new User(-1, userNameInput.getText(), emailInput.getText(), password, firstnameInput.getText(), surnameInput.getText(), 0);
 
         String missingFields = "";
-        if (imie.isEmpty()) missingFields += "Imię, ";
-        if (nazwisko.isEmpty()) missingFields += "Nazwisko, ";
-        if (nazwa_uzytkownika.isEmpty()) missingFields += "Nazwa użytkownika, ";
-        if (email.isEmpty()) missingFields += "Email, ";
-        if (haslo.isEmpty()) missingFields += "Hasło, ";
+        if (user.getName().isEmpty()) missingFields += "Imię, ";
+        if (user.getSureName().isEmpty()) missingFields += "Nazwisko, ";
+        if (user.getUsername().isEmpty()) missingFields += "Nazwa użytkownika, ";
+        if (user.getEmail().isEmpty()) missingFields += "Email, ";
+        if (user.getPassword().isEmpty()) missingFields += "Hasło, ";
 
         if (!missingFields.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Brakujące pola: " + missingFields.substring(0, missingFields.length() - 2));
             return;
         }
 
-        if (!validateEmail(email)) {
+        if (!validateEmail(user.getEmail())) {
             JOptionPane.showMessageDialog(this, "Nieprawidłowy adres email.");
             return;
         }
 
-        if (!validatePassword(haslo)) {
+        if (!validatePassword(password)) {
             JOptionPane.showMessageDialog(this, "Hasło musi zawierać 1 znak specjalny, 1 cyfrę, 1 wielką literę i mieć minimum 8 znaków.");
             return;
         }
 
-        if (!haslo.equals(haslo1)) {
-            JOptionPane.showMessageDialog(this, "Hasła nie są zgodne.");
-            return;
+        try {
+            UserService.createUser(user);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Błąd podczas rejestracji: " + ex.getMessage());
         }
-
-
-        registerUser(nazwa_uzytkownika, email, haslo, imie, nazwisko);
     }
 
     private boolean validateEmail(String email) {
@@ -111,26 +115,5 @@ public class RegisterForm extends JFrame {
         String digits = "(.*[0-9].*)";
         String upperCaseChars = "(.*[A-Z].*)";
         return password.matches(specialChars) && password.matches(digits) && password.matches(upperCaseChars);
-    }
-
-    private void registerUser(String nazwa_uzytkownika, String email, String haslo, String imie, String nazwisko) {
-        try (Connection connection = Database.getConnection()) {
-            String query = "INSERT INTO user (id_user, nazwa_uzytkownika, email, haslo, imie, nazwisko, Admin) VALUES (null, ?, ?, ?, ?, ?, 0)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, nazwa_uzytkownika);
-            preparedStatement.setString(2, email);
-            preparedStatement.setString(3, haslo);
-            preparedStatement.setString(4, imie);
-            preparedStatement.setString(5, nazwisko);
-            int rowsInserted = preparedStatement.executeUpdate();
-            if (rowsInserted > 0) {
-                JOptionPane.showMessageDialog(this, "Rejestracja zakończona sukcesem.");
-                LoginForm loginForm = new LoginForm();
-                loginForm.setVisible(true);
-                dispose();
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(this, "Błąd podczas rejestracji: " + ex.getMessage());
-        }
     }
 }

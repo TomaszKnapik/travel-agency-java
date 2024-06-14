@@ -1,6 +1,6 @@
 import javax.swing.*;
 
-public class EditOfferPanel {
+public class EditOfferPanel extends JFrame {
     private JPanel editOfferPanel;
     private JPanel titlePanel;
 }

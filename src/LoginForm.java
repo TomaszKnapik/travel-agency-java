@@ -1,5 +1,6 @@
 import Models.User;
 import Models.UserSingleton;
+import Services.UserService;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -35,7 +36,7 @@ public class LoginForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    User user = getUser(emailInput.getText(), new String(passwordField1.getPassword()));
+                    User user = UserService.getUser(emailInput.getText(), new String(passwordField1.getPassword()));
                     if (user == null) {
                         JOptionPane.showMessageDialog(LoginForm.this, "Nieprawidłowy email lub hasło.", "Błąd logowania", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -83,30 +84,5 @@ public class LoginForm extends JFrame {
                 menu.setVisible(true);
             }
         });
-    }
-
-    private User getUser(String username, String password) throws SQLException {
-        Connection connection = Database.getConnection();
-        String query = "SELECT * FROM user WHERE nazwa_uzytkownika = ? AND haslo = ?";
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setString(1, username);
-        preparedStatement.setString(2, password);
-        ResultSet resultSet = preparedStatement.executeQuery();
-
-        User result = null;
-
-        if (resultSet.next()) {
-            int userId = resultSet.getInt("id_user");
-            String email = resultSet.getString("email");
-            String loggedUsername = resultSet.getString("nazwa_uzytkownika");
-            int userRole = resultSet.getInt("Admin");
-            result = new User(userId, email, loggedUsername, userRole);
-        }
-
-        resultSet.close();
-        preparedStatement.close();
-        connection.close();
-
-        return result;
     }
 }

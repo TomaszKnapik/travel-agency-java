@@ -40,6 +40,8 @@ public class AdminDashboard extends JFrame {
         usersMenagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                UsersMenagement usersMenagement = new UsersMenagement();
+                usersMenagement.setVisible(true);
                 dispose();
             }
         });
@@ -54,10 +56,10 @@ public class AdminDashboard extends JFrame {
         logOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
                 Menu menu = new Menu();
                 UserSingleton.logout();
                 menu.setVisible(true);
+                dispose();
             }
         });
         exitButton.addActionListener(new ActionListener() {
