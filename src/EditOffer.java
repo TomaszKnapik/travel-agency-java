@@ -1,12 +1,12 @@
 import Models.Offer;
+import Services.OfferService;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-
-import Services.OfferService;
 import com.github.lgooddatepicker.components.DatePicker;
+
 public class EditOffer extends JFrame {
 
     Offer offer;
@@ -57,7 +57,6 @@ public class EditOffer extends JFrame {
                     } else {
                         createOffer();
                     }
-
                     setTitleLabel();
                 }
             }
@@ -74,6 +73,7 @@ public class EditOffer extends JFrame {
 
     private void setTitleLabel() {
         titleLabel.setText(editMode ? "Edycja oferty " + offer.getName() : "Dodawanie oferty");
+        saveButton.setText(editMode ? "Zapisz zmiany" : "Dodaj oferte");
     }
 
     private void loadOffer(int offerId) {

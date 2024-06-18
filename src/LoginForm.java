@@ -38,7 +38,7 @@ public class LoginForm extends JFrame {
                 try {
                     User user = UserService.getUser(emailInput.getText(), new String(passwordField1.getPassword()));
                     if (user == null) {
-                        JOptionPane.showMessageDialog(LoginForm.this, "Nieprawidłowy email lub hasło.", "Błąd logowania", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(LoginForm.this, "Nieprawidłowa nazwa użytkownika lub hasło.", "Błąd logowania", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 

@@ -1,5 +1,4 @@
 import Models.Offer;
-import Models.UserSingleton;
 import Services.OfferService;
 
 import javax.swing.*;

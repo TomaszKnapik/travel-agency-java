@@ -1,17 +1,15 @@
 import Models.User;
+import Services.OfferService;
 import Services.UserService;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class EditUser extends JFrame {
+public class EditUserAdmin extends JFrame {
 
     User user;
-    private JPanel editUser;
     private JLabel PhotoLabel;
     private JButton backButton;
     private JButton saveButton;
@@ -19,16 +17,22 @@ public class EditUser extends JFrame {
     private JTextField surNameInput;
     private JTextField userNameInput;
     private JTextField passwordInput;
-    private JTextField emailInput;
+    private JTextField emailInpup;
+    private JPanel editUserAdmin;
+    private JCheckBox adminCheckBox;
+    private JLabel titleLabel;
 
-    public EditUser(int userID) {
+    private boolean editMode = false;
+
+    public EditUserAdmin(int userID) {
         super("Edycja użytkownika");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(this.editUser);
+        this.setContentPane(this.editUserAdmin);
         this.setSize(800, 600);
         setLocationRelativeTo(null);
 
         loadUser(userID);
+        setTitleLabel();
 
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -37,26 +41,39 @@ public class EditUser extends JFrame {
                     user.setUsername(userNameInput.getText());
                     user.setName(nameInput.getText());
                     user.setSureName(surNameInput.getText());
-                    user.setEmail(emailInput.getText());
+                    user.setEmail(emailInpup.getText());
                     user.setPassword(passwordInput.getText());
-                    updateUser();
+                    user.setUserRole(adminCheckBox.isSelected() ? 1 : 0);
                 }
+                if (editMode) {
+                    updateUser();
+                } else {
+                    createUser();
+                }
+                setTitleLabel();
             }
         });
+
+
 
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserDashboard userDashboard = new UserDashboard();
-                userDashboard.setVisible(true);
+                UsersMenagement usersMenagement = new UsersMenagement();
+                usersMenagement.setVisible(true);
                 dispose();
             }
         });
     }
 
+    private void setTitleLabel() {
+        titleLabel.setText(editMode ? "Edycja użytkownika " + user.getUsername() : "Dodawanie użytkownika");
+        saveButton.setText(editMode ? "Zapisz zmiany" : "Dodaj użytkownika");
+    }
+
     private void loadUser(int userID) {
         try {
-            if (userID > 0) {
+            if (userID > 0){
                 user = UserService.getUser(userID);
             }
 
@@ -65,11 +82,14 @@ public class EditUser extends JFrame {
                 return;
             }
 
+            editMode = true;
+
             userNameInput.setText(user.getUsername());
             nameInput.setText(user.getName());
             surNameInput.setText(user.getSureName());
-            emailInput.setText(user.getEmail());
+            emailInpup.setText(user.getEmail());
             passwordInput.setText(user.getPassword());
+            adminCheckBox.setSelected(user.getUserRole() == 0);
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Błąd podczas ładowania użytkownika.", "Błąd", JOptionPane.ERROR_MESSAGE);
@@ -79,9 +99,25 @@ public class EditUser extends JFrame {
     private void updateUser() {
         try {
             UserService.updateUser(user.getUserId(), user);
-            JOptionPane.showMessageDialog(this, "Zmiany zostały zapisane", "Edycja", JOptionPane.INFORMATION_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Błąd podczas zapisu użytkownika.", "Błąd", JOptionPane.ERROR_MESSAGE);
+        }
+        finally {
+            JOptionPane.showMessageDialog(this, "Zmiany zostały zapisane", "Edycja", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void createUser() {
+        try {
+            int id = UserService.createUser(user);
+            if (id <= 0) {
+                JOptionPane.showMessageDialog(this, "Błąd podczas dodawania użytkownika.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            user.setUserId(id);
+            editMode = true;
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Błąd podczas dodawania użytkownika.", "Błąd", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -89,52 +125,26 @@ public class EditUser extends JFrame {
         StringBuilder missingFields = new StringBuilder();
 
         if (nameInput.getText().trim().isEmpty()) {
-            missingFields.append("Imię, ");
+            missingFields.append("imie, ");
         }
         if (surNameInput.getText().trim().isEmpty()) {
-            missingFields.append("Nazwisko, ");
+            missingFields.append("nazwisko, ");
         }
-        if (userNameInput.getText().trim().isEmpty()) {
-            missingFields.append("Nazwa użytkownika, ");
+        if (userNameInput.getText() == null) {
+            missingFields.append("nazwa użytkownika, ");
         }
-        if (emailInput.getText().trim().isEmpty()) {
-            missingFields.append("Email, ");
+        if (emailInpup.getText() == null) {
+            missingFields.append("email, ");
         }
         if (passwordInput.getText().trim().isEmpty()) {
-            missingFields.append("Hasło, ");
+            missingFields.append("hasło, ");
         }
 
         if (missingFields.length() > 0) {
             missingFields.setLength(missingFields.length() - 2);
-            JOptionPane.showMessageDialog(this, "Brakujące pola: " + missingFields.toString(), "Błąd", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Wypełnij brakujące pola: " + missingFields.toString(), "Błąd", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-        if (!validateEmail(emailInput.getText())) {
-            JOptionPane.showMessageDialog(this, "Nieprawidłowy adres email.");
-            return false;
-        }
-
-        if (!validatePassword(passwordInput.getText())) {
-            JOptionPane.showMessageDialog(this, "Hasło musi zawierać 1 znak specjalny, 1 cyfrę, 1 wielką literę i mieć minimum 8 znaków.");
-            return false;
-        }
-
         return true;
-    }
-
-    private boolean validateEmail(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-        Pattern pattern = Pattern.compile(emailRegex);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    private boolean validatePassword(String password) {
-        if (password.length() < 8) return false;
-        String specialChars = "(.*[!@#$%^&*].*)";
-        String digits = "(.*[0-9].*)";
-        String upperCaseChars = "(.*[A-Z].*)";
-        return password.matches(specialChars) && password.matches(digits) && password.matches(upperCaseChars);
     }
 }

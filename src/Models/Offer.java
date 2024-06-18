@@ -69,6 +69,6 @@ public class Offer {
 
     @Override
     public String toString() {
-        return "Nr: " + offerId + ", Tytuł: " + name + ", Cena: " + Double.toString(price);
+        return "Nr: " + offerId + ", " + name ;
     }
 }

@@ -1,5 +1,4 @@
 package Services;
-import Models.Offer;
 import Models.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.sql.Date;
-
 public class UserService {
 
     public static User getUser(String username, String password) throws SQLException {
@@ -77,15 +74,13 @@ public class UserService {
         try (Connection connection = Database.getConnection()) {
             String query = "UPDATE user SET nazwa_uzytkownika= ? ,email= ? ,haslo= ? ,imie= ? ,nazwisko= ?, Admin= ? WHERE id_user = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, user.getPassword());
             preparedStatement.setString(4, user.getName());
             preparedStatement.setString(5, user.getSureName());
             preparedStatement.setInt(6, user.getUserRole());
             preparedStatement.setInt(7, userID);
-
-            //TODO OFFER -> USER
 
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -98,15 +93,14 @@ public class UserService {
     public static int createUser(User user) throws SQLException {
         int id = -1;
         try (Connection connection = Database.getConnection()) {
-            String query = "INSERT INTO user (nazwa_uzytkownika, email, haslo, imie, nazwisko) VALUES (?, ?, ?, ?, ?)";
+            String query = "INSERT INTO user (nazwa_uzytkownika, email, haslo, imie, nazwisko, Admin) VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, user.getName());
+            preparedStatement.setString(1, user.getUsername());
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setString(3, user.getPassword());
             preparedStatement.setString(4, user.getName());
             preparedStatement.setString(5, user.getSureName());
-
-            //TODO OFFER -> USER
+            preparedStatement.setInt(6, user.getUserRole());
 
             preparedStatement.executeUpdate();
 

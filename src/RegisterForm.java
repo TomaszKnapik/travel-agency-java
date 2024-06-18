@@ -100,6 +100,12 @@ public class RegisterForm extends JFrame {
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Błąd podczas rejestracji: " + ex.getMessage());
         }
+        finally {
+            dispose();
+            LoginForm loginForm = new LoginForm();
+            loginForm.setVisible(true);
+            JOptionPane.showMessageDialog(this, "Rejestracja udana, zaloguj się!");
+        }
     }
 
     private boolean validateEmail(String email) {

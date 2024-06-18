@@ -41,22 +41,22 @@ public class UsersMenagement extends JFrame {
         addNewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-//                EditUser editUser = new EditUser();
-//                editUser.setVisible(true);
-//                dispose();
+                EditUserAdmin editUserAdmin = new EditUserAdmin(-1);
+                editUserAdmin.setVisible(true);
+                dispose();
             }
-            //TODO Dodać EditUser
         });
 
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                User selectedUser = (User) usersList.getSelectedValue();
+                User selectedUser = usersList.getSelectedValue();
+//                (User)
                 if (selectedUser != null) {
                     int userNumber = selectedUser.getUserId();
-//                    EditUser editUser = new EditUser(userNumber);
-//                    editUser.setVisible(true);
-//                    dispose();
+                    EditUserAdmin editUserAdmin = new EditUserAdmin(userNumber);
+                    editUserAdmin.setVisible(true);
+                    dispose();
                 } else {
                     JOptionPane.showMessageDialog(UsersMenagement.this, "Wybierz użytkownika do edycji.", "Błąd", JOptionPane.ERROR_MESSAGE);
                 }

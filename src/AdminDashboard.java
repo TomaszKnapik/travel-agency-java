@@ -31,9 +31,9 @@ public class AdminDashboard extends JFrame {
         offersMenagementButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
                 OffersMenagementPanel offersMenagementPanel = new OffersMenagementPanel();
                 offersMenagementPanel.setVisible(true);
+                dispose();
             }
         });
 
