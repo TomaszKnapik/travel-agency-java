@@ -22,6 +22,7 @@ public class Menu extends JFrame {
         this.setContentPane(this.MenuPanel);
         this.setSize(800, 600);
         setLocationRelativeTo(null);
+        UiDesigner.applyStyles();
 
         try {
             setIconImage(ImageIO.read(new File("src/icon.png")));

@@ -1,9 +1,12 @@
 import Models.Offer;
 import Services.OfferService;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import com.github.lgooddatepicker.components.DatePicker;
 
@@ -32,6 +35,14 @@ public class EditOffer extends JFrame {
         this.setContentPane(this.editOfferPane);
         this.setSize(800, 600);
         setLocationRelativeTo(null);
+        UiDesigner.applyStyles();
+
+
+        try {
+            setIconImage(ImageIO.read(new File("src/icon.png")));
+        } catch (IOException | IllegalArgumentException e) {
+            System.out.println("Wystąpił błąd przy wczytywaniu icon.png.");
+        }
 
         datePickerFrom = new DatePicker();
         datePickerPanelFrom.add(datePickerFrom);

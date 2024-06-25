@@ -1,9 +1,12 @@
 import Models.User;
 import Services.UserService;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,7 +21,7 @@ public class EditUser extends JFrame {
     private JTextField nameInput;
     private JTextField surNameInput;
     private JTextField userNameInput;
-    private JTextField passwordInput;
+    private JPasswordField passwordInput;
     private JTextField emailInput;
 
     public EditUser(int userID) {
@@ -27,6 +30,13 @@ public class EditUser extends JFrame {
         this.setContentPane(this.editUser);
         this.setSize(800, 600);
         setLocationRelativeTo(null);
+        UiDesigner.applyStyles();
+
+        try {
+            setIconImage(ImageIO.read(new File("src/icon.png")));
+        } catch (IOException | IllegalArgumentException e) {
+            System.out.println("Wystąpił błąd przy wczytywaniu icon.png.");
+        }
 
         loadUser(userID);
 

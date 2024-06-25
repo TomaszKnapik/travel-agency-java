@@ -1,11 +1,14 @@
 import Models.Offer;
 import Services.OfferService;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,6 +30,13 @@ public class OffersMenagementPanel extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(this.offersMenagementPanel);
         this.setSize(800, 600);
+        UiDesigner.applyStyles();
+
+        try {
+            setIconImage(ImageIO.read(new File("src/icon.png")));
+        } catch (IOException | IllegalArgumentException e) {
+            System.out.println("Wystąpił błąd przy wczytywaniu icon.png.");
+        }
         setLocationRelativeTo(null);
 
         loadOffers();

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Cze 17, 2024 at 10:22 PM
+-- Generation Time: Cze 23, 2024 at 10:39 AM
 -- Wersja serwera: 10.4.32-MariaDB
 -- Wersja PHP: 8.2.12
 
@@ -41,8 +41,7 @@ CREATE TABLE `ogloszenia` (
 --
 
 INSERT INTO `ogloszenia` (`id_ogloszenia`, `tytul`, `opis`, `od_kiedy`, `do_kiedy`, `cena`) VALUES
-(1, 'Dassia Holiday Club', 'Porządny hotel w dobrej cenie. Podstawowe ale bardzo dobrze utrzymane 3* - przyjemny teren basenowy, funkcjonalne oraz przestronne pokoje oraz smaczne wyżywienie. Uroku dodaje położenie - pośród cyprysów, drzewek cytrusowych i oliwnych oraz z pięknym widokiem na morze. Do centrum Dassia (tam sklepy, tawerny, bary i dyskoteki) jedyne 400 metrów, a do plaży Ipsos dowozi bus hotelowy. Dla poszukujących wieczornych i nocnych rozrywek – dyskoteki i kluby muzyczne w pobliskim Ipsos to jedne z najbardziej znanych na całej wyspie.', '2024-07-01', '2024-07-15', 3561),
-(2, 'Yasmin Bodrum Resort', 'Nowoczesny hotel, którego zdecydowanym atutem są przepiękne krajobrazy, piaszczysta plaża wyróżniona Błękitna Flagą i wygodna formuła Ultra All Inclusive. Idealne miejsce na rodzinne wakacje pełne atrakcji i rewelacyjna propozycja dla wszystkich lubiących aktywny wypoczynek.', '2024-08-08', '2024-08-22', 3625),
+(2, 'Yasmin Bodrum Resort', 'Nowoczesny hotel, którego zdecydowanym atutem są przepiękne krajobrazy, piaszczysta plaża wyróżniona Błękitna Flagą i wygodna formuła Ultra All Inclusive. Idealne miejsce na rodzinne wakacje pełne atrakcji i rewelacyjna propozycja dla wszystkich lubiących aktywny wypoczynek.', '2024-08-08', '2024-08-22', 3626),
 (3, 'Palm Beach Resort Hurghada\r\n', 'Dobra propozycja dla aktywnych, szczególnie ceniących położenie hotelu nad malowniczym Morzem Czerwonym.\r\n\r\n', '2024-07-04', '2024-07-17', 1220),
 (11, 'ASD', '1234', '2024-06-01', '2024-06-22', 123),
 (12, 'asdasd', 'asd', '2024-06-08', '2024-06-22', 123);
@@ -65,7 +64,10 @@ CREATE TABLE `reservation` (
 --
 
 INSERT INTO `reservation` (`id_reservation`, `id_user`, `id_ogloszenia`, `aktywne`) VALUES
-(1, 1, 1, 1);
+(10, 3, 2, 1),
+(15, 29, 12, 1),
+(16, 29, 2, 1),
+(17, 29, 11, 1);
 
 -- --------------------------------------------------------
 
@@ -90,11 +92,9 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`id_user`, `nazwa_uzytkownika`, `email`, `haslo`, `imie`, `nazwisko`, `Admin`) VALUES
 (1, 'admin', 'admin@admin.com', 'admin', 'admin', 'admin', 1),
 (2, 'TomaszKnapik', 'tk131452@stud.ur.edu.pl', 'TomaszKnapik123', 'Tomasz', 'Knapik', 1),
-(3, 'm', 'mariusznowak@gmail.com', 'm', 'Mariusz', 'Nowak', 0),
+(3, 'Mariusz123', 'mariusznowak@gmail.com', 'Mariuszek123!', 'Mariusz', 'Nowak', 0),
 (4, 'Tomeczek', 'Itomaszeki123@gmail.com', 'Isia123*', 'Tomasz', 'Knapik', 0),
-(26, 'Arai11', 'adam.knapik2005@interia.pl', 'Mario123!', 'Adam', 'Knapik', 0),
-(27, 'Arai11', 'adam.knapik@gmail.com', 'TwojaStara1!', 'Adamd', 'Knap', 0),
-(28, 'Isiapysia', 'iga.przybylik@gmail.com', 'Iśka123@', 'Isia', 'Przybylik', 1);
+(29, 'u', 'itomaszeki123@gmail.com', 'u', 'Tomasz', 'Knapik', 0);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -132,13 +132,13 @@ ALTER TABLE `ogloszenia`
 -- AUTO_INCREMENT for table `reservation`
 --
 ALTER TABLE `reservation`
-  MODIFY `id_reservation` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_reservation` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

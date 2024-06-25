@@ -1,11 +1,14 @@
 import Models.User;
 import Services.UserService;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -21,11 +24,18 @@ public class UsersMenagement extends JFrame {
 
 
     public UsersMenagement() {
-        super("Zarządzanie użytkonikami");
+        super("Zarządzanie użytkownikami");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(this.userMenagement);
         this.setSize(800, 600);
         setLocationRelativeTo(null);
+        UiDesigner.applyStyles();
+
+        try {
+            setIconImage(ImageIO.read(new File("src/icon.png")));
+        } catch (IOException | IllegalArgumentException e) {
+            System.out.println("Wystąpił błąd przy wczytywaniu icon.png.");
+        }
 
         loadUsers();
 

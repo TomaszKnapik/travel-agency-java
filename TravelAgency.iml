@@ -7,7 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="mysql-connector-j-8.4.0" level="project" />
     <orderEntry type="library" name="LGoodDatePicker-11.2.1" level="project" />
+    <orderEntry type="library" name="mysql-connector-j-8.4.0" level="project" />
+    <orderEntry type="library" name="jfreechart-1.0.19" level="project" />
   </component>
 </module>

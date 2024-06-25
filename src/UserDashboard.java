@@ -1,9 +1,12 @@
 import Models.User;
 import Models.UserSingleton;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
 public class UserDashboard extends JFrame {
     private JPanel userPanel;
@@ -25,7 +28,13 @@ public class UserDashboard extends JFrame {
         this.setContentPane(this.userPanel);
         this.setSize(800, 600);
         setLocationRelativeTo(null);
+        UiDesigner.applyStyles();
 
+        try {
+            setIconImage(ImageIO.read(new File("src/icon.png")));
+        } catch (IOException | IllegalArgumentException e) {
+            System.out.println("Wystąpił błąd przy wczytywaniu icon.png.");
+        }
 
         exitButton.addActionListener(new ActionListener() {
             @Override
@@ -51,21 +60,22 @@ public class UserDashboard extends JFrame {
                 dispose();
             }
         });
-        viewOffersButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int userId = user.getUserId();
-//                BookOffer bookOffer = new BookOffer(userId);
-//                bookOffer.setVisible(true);
-                dispose();
-            }
-        });
+
         viewOffersButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int userId = user.getUserId();
                 ViewOffersPanel viewOffersPanel = new ViewOffersPanel(userId);
                 viewOffersPanel.setVisible(true);
+                dispose();
+            }
+        });
+        viewUserOffersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int userId = user.getUserId();
+                ShowOffersUser showOffersUser = new ShowOffersUser(userId);
+                showOffersUser.setVisible(true);
                 dispose();
             }
         });

@@ -1,6 +1,7 @@
 package Services;
 
 import Models.Offer;
+import Models.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +32,27 @@ public class OfferService {
         }
         return result;
     }
+    public static List<Offer> getUserOffers(int userID) throws SQLException {
+        List<Offer> offers = new ArrayList<>();
+        try (Connection connection = Database.getConnection()) {
+            String query = "SELECT o.* FROM reservation r INNER JOIN ogloszenia o ON r.id_ogloszenia = o.id_ogloszenia WHERE r.id_user = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                offers.add(new Offer(resultSet.getInt("id_ogloszenia"), resultSet.getString("tytul"), resultSet.getString("opis"), resultSet.getDate("od_kiedy"), resultSet.getDate("do_kiedy"), resultSet.getDouble("cena")));
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return offers;
+    }
+
 
     public static List<Offer> getOffers() throws SQLException {
         List<Offer> offers = new ArrayList<>();

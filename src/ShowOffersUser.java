@@ -1,6 +1,5 @@
 import Models.Offer;
 import Models.Reservation;
-import Models.User;
 import Models.UserSingleton;
 import Services.OfferService;
 import Services.ReservationService;
@@ -16,21 +15,21 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ViewOffersPanel extends JFrame {
+public class ShowOffersUser extends JFrame {
     Reservation reservation;
     private JList<Offer> offersList;
     private JLabel offerNameField;
-    private JButton bookButton;
+    private JButton delButton;
     private JButton backButton;
     private JPanel viewOffers;
     private JTextArea descriptionField;
     private JLabel dateFromField;
     private JLabel dateToField;
     private JLabel priceField;
-    private JLabel reservationStatus;
+    private JButton payReservationButton;
 
-    public ViewOffersPanel(int userID) {
-        setTitle("Dostępne oferty podróży");
+    public ShowOffersUser(int userID) {
+        setTitle("Twoje oferty podróży");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(this.viewOffers);
         this.setSize(800, 600);
@@ -66,56 +65,52 @@ public class ViewOffersPanel extends JFrame {
                         dateFromField.setText("Data od: " + selectedOffer.getDateFrom().toString());
                         dateToField.setText("Data do: " + selectedOffer.getDateTo().toString());
                         priceField.setText("Cena: " + selectedOffer.getPrice() + " PLN");
-                        checkIfReserved(selectedOffer.getOfferId());
                     }
                 }
             }
         });
 
-        bookButton.addActionListener(new ActionListener() {
+        delButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Offer selectedOffer = offersList.getSelectedValue();
                 if (selectedOffer != null) {
-//                    int offerNumber = selectedOffer.getOfferId();
-                    try {
-                        reservation = new Reservation(
-                                -1,
-                                UserSingleton.getInstance().getUser().getUserId(),
-                                selectedOffer.getOfferId(),
-                                1);
-                        ReservationService.createReservation(reservation);
-                        JOptionPane.showMessageDialog(ViewOffersPanel.this, "Rezerwacja została pomyślnie dokonana.", "Sukces", JOptionPane.INFORMATION_MESSAGE);
-                        checkIfReserved(selectedOffer.getOfferId());
-                    } catch (SQLException ex) {
-                        JOptionPane.showMessageDialog(ViewOffersPanel.this, "Błąd podczas dokonywania rezerwacji.", "Błąd", JOptionPane.ERROR_MESSAGE);
-                    }
-                    finally {
-                        ShowOffersUser showOffersUser = new ShowOffersUser(userID);
-                        showOffersUser.setVisible(true);
-                        dispose();
-                    }
+                    int offerNumber = selectedOffer.getOfferId();
+                    removeReservation(offerNumber);
+                    loadOffers();
+                    offerNameField.setText("Wybrano ogłoszenie: ");
+                    descriptionField.setText("Opis: ");
+                    dateFromField.setText("Data od: ");
+                    dateToField.setText("Data do: ");
+                    priceField.setText("Cena: ");
+                    JOptionPane.showMessageDialog(ShowOffersUser.this, "Usunięto rezerwację pomyślnie.", "", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(ViewOffersPanel.this, "Wybierz ofertę do rezerwacji.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(ShowOffersUser.this, "Wybierz rezerwacje do usunięcia.", "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        });
+
+        payReservationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
             }
         });
     }
 
-    private void checkIfReserved(int offerId) {
+    private void removeReservation(int offerId) {
         try {
-            boolean reserved = ReservationService.userHasReservation(UserSingleton.getInstance().getUser().getUserId(), offerId);
-            reservationStatus.setText(reserved ? "Zarezerwowano" : "Brak rezerwacji");
-            bookButton.setEnabled(!reserved);
+            ReservationService.removeReservation(offerId, UserSingleton.getInstance().getUser().getUserId());
+            loadOffers();
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Błąd podczas sprawdzania statusu oferty.", "Błąd", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Błąd podczas usuwania rezerwacji.", "Błąd", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void loadOffers() {
         DefaultListModel<Offer> listModel = new DefaultListModel<>();
         try {
-            List<Offer> offers = OfferService.getOffers();
+            List<Offer> offers = OfferService.getUserOffers(UserSingleton.getInstance().getUser().getUserId());
             for (Offer offer : offers) {
                 listModel.addElement(offer);
             }

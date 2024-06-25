@@ -2,6 +2,8 @@ package Services;
 
 import Models.Offer;
 import Models.Reservation;
+import Models.User;
+import Models.ReservationWithPrice;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +32,69 @@ public class ReservationService {
             throw e;
         }
         return result;
+    }
+
+    public static List<ReservationWithPrice> getReservationsWithPrice() throws SQLException {
+        List<ReservationWithPrice> reservations = new ArrayList<>();
+        try (Connection connection = Database.getConnection()) {
+            String query = "SELECT r.date, o.cena " +
+                    "FROM reservation r " +
+                    "JOIN ogloszenia o ON r.id_ogloszenia = o.id_ogloszenia";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                reservations.add(new ReservationWithPrice(resultSet.getDate("date"), resultSet.getFloat("cena")));
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return reservations;
+    }
+
+    public static List<Offer> getOffersForUser(int userID) throws SQLException {
+        List<Offer> offers = new ArrayList<>();
+        try (Connection connection = Database.getConnection()) {
+            String query = "SELECT o.id_ogloszenia, o.tytul, o.opis, o.od_kiedy, o.do_kiedy, o.cena FROM reservation r NATURAL JOIN ogloszenia o WHERE r.id_user = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, userID);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+               offers.add(new Offer(resultSet.getInt("id_ogloszenia"), resultSet.getString("tytul"), resultSet.getString("opis"), resultSet.getDate("od_kiedy"), resultSet.getDate("do_kiedy"), resultSet.getInt("cena")));
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return offers;
+    }
+
+    public static List<User> getUsersForOffer(int offerId) throws SQLException {
+        List<User> users = new ArrayList<>();
+        try (Connection connection = Database.getConnection()) {
+            String query = "SELECT u.* FROM reservation r NATURAL JOIN user u WHERE r.id_ogloszenia = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, offerId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                users.add(new User(resultSet.getInt("id_user"),resultSet.getString("nazwa_uzytkownika"), resultSet.getString("email"), resultSet.getString("haslo"), resultSet.getString("imie"), resultSet.getString("nazwisko"), resultSet.getInt("Admin")));
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+        return users;
     }
 
     public static boolean userHasReservation(int userId, int offerId) throws SQLException {
@@ -107,11 +172,12 @@ public class ReservationService {
 
         return id;
     }
-    public static void removeReservation(int reservationID) throws SQLException {
+    public static void removeReservation(int offerID, int userID) throws SQLException {
         try (Connection connection = Database.getConnection()) {
-            String query = "DELETE FROM reservation WHERE id_reservation = ?";
+            String query = "DELETE FROM reservation WHERE id_ogloszenia = ? AND id_user = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, reservationID);
+            preparedStatement.setInt(1, offerID);
+            preparedStatement.setInt(2, userID);
             preparedStatement.executeUpdate();
             preparedStatement.close();
         } catch (SQLException e) {
