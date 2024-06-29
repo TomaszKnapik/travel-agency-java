@@ -99,7 +99,7 @@ public class EditUserAdmin extends JFrame {
             surNameInput.setText(user.getSureName());
             emailInpup.setText(user.getEmail());
             passwordInput.setText(user.getPassword());
-            adminCheckBox.setSelected(user.getUserRole() == 0);
+            adminCheckBox.setSelected(user.getUserRole() == 1);
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Błąd podczas ładowania użytkownika.", "Błąd", JOptionPane.ERROR_MESSAGE);

@@ -31,7 +31,7 @@ public class ReservationMenagement extends JFrame {
     }
 
     public ReservationMenagement() {
-        setTitle("Dostępne oferty podróży");
+        setTitle("Rezerwacje podróży");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setContentPane(this.reservationMenu);
         this.setSize(800, 600);

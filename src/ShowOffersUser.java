@@ -89,13 +89,6 @@ public class ShowOffersUser extends JFrame {
                 }
             }
         });
-
-        payReservationButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
     }
 
     private void removeReservation(int offerId) {
